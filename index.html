@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Петиція — Повернення Ірини Миколаївни</title>
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #0f172a; /* slate-900 */
+      --muted: #475569; /* slate-600 */
+      --line: #e2e8f0; /* slate-200 */
+      --brand: #2563eb; /* blue-600 */
+      --brand-2: #1d4ed8; /* blue-700 */
+      --success: #16a34a; /* green-600 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, #f8fafc, #fff 50%);
+      color: var(--text);
+    }
+    .topbar{
+      position: sticky; top:0; z-index: 20;
+      background: rgba(255,255,255,.8); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .container{ max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    .topbar-inner{ display:flex; align-items:center; justify-content:space-between; padding: 12px 0; }
+    .brand{ display:flex; gap:8px; align-items:center; font-weight:600; }
+    .chip{ display:inline-block; padding:2px 8px; font-size:12px; border-radius:999px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
+
+    header{ padding: 24px 0 8px; }
+    h1{ margin: 8px 0 0; font-size: clamp(28px, 3.5vw, 40px); line-height:1.1 }
+    .meta{ margin-top: 10px; display:flex; flex-wrap:wrap; gap:12px; color: var(--muted); font-size:14px }
+    .meta div{ display:flex; gap:6px; align-items:center }
+
+    main{ display:grid; grid-template-columns: 1fr; gap: 20px; padding: 16px 0 64px }
+    @media (min-width: 900px){ main{ grid-template-columns: 1.7fr 1fr; gap: 28px } }
+
+    .card{ background: var(--card); border:1px solid var(--line); border-radius:16px; box-shadow: 0 8px 24px rgba(15,23,42,.04); }
+    .card .head{ padding: 16px 18px; border-bottom:1px solid var(--line); font-weight:700 }
+    .card .body{ padding: 18px; color:#334155; line-height:1.6 }
+    .body p{ margin: 0 0 14px }
+    .muted{ color: var(--muted) }
+
+    .progress-wrap{ display:flex; align-items:center; justify-content:space-between; font-size:14px; color:var(--muted); margin-bottom:8px }
+    .progress{ height: 10px; background:#eef2f7; border-radius:999px; overflow:hidden; border:1px solid #e5e7eb }
+    .progress > i{ display:block; height:100%; width:0%; background: linear-gradient(90deg, var(--brand), var(--brand-2)); transition: width .5s ease }
+
+    .btn{ appearance:none; border:none; background: var(--brand); color:#fff; padding:12px 16px; border-radius:12px; font-weight:700; cursor:pointer; width:100%; }
+    .btn:hover{ background: var(--brand-2) }
+    .btn.outline{ background:#fff; color: var(--text); border:1px solid var(--line); }
+    .btn.small{ padding:8px 12px; border-radius:10px; font-weight:600 }
+
+    .row{ display:flex; gap:10px }
+    .row > *{ flex:1 }
+
+    .note{ font-size:12px; color: var(--muted); margin-top:12px }
+
+    .sticky{ position: sticky; top: 90px }
+
+    /* Modal */
+    dialog::backdrop{ background: rgba(15,23,42,.35) }
+    dialog{ border:none; border-radius:16px; padding:0; max-width: 560px; width: calc(100% - 24px); box-shadow: 0 30px 80px rgba(15,23,42,.25); }
+    .modal-head{ padding:16px 18px; border-bottom:1px solid var(--line); font-weight:700 }
+    .modal-body{ padding: 16px 18px; }
+    .modal-actions{ padding: 16px 18px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px }
+
+    label{ display:block; font-size:14px; font-weight:600; margin-bottom:6px }
+    input[type="text"], input[type="email"], textarea{
+      width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line); background:#fff; font: inherit;
+    }
+    textarea{ min-height: 90px; resize: vertical }
+    .field{ margin-bottom:12px }
+    .check{ display:flex; align-items:flex-start; gap:8px; font-size:14px; color:#334155 }
+    .error{ color:#b91c1c; font-size:12px; margin-top:6px }
+
+    /* Toast */
+    .toast{ position: fixed; left:50%; transform: translateX(-50%); bottom: 24px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 14px; box-shadow:0 12px 40px rgba(15,23,42,.18); font-size:14px; display:none }
+    .toast.show{ display:block }
+
+    footer{ border-top:1px solid var(--line); background:#fff }
+    footer .container{ padding: 24px 16px; color: var(--muted); font-size:12px }
+
+    .badge{ display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid #dbeafe; background:#eff6ff; color:#1e40af }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">Єдиний портал електронних петицій</div>
+      <div class="row" style="max-width:360px">
+        <button class="btn small outline" id="shareBtn">Поділитися</button>
+        <button class="btn small outline" id="copyBtn">Копіювати посилання</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="container">
+    <span class="badge">Збір підписів триває</span>
+    <h1>Щодо повернення Ірини Миколаївни</h1>
+    <div class="meta">
+      <div>№ 2025/081-IM</div>
+      <div>Створено: 22 серпня 2025</div>
+      <div>Автор: Максим (ініціатор звернення)</div>
+      <div>Адресат: Президент України</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="head">Зміст петиції</div>
+      <div class="body">
+        <p>Ми, громадяни та небайдужі підписанти, висловлюємо глибоку стурбованість фактом відсутності Ірини Миколаївни.</p>
+        <p>Її внесок у стабільність, порядок та гармонію колективу є істотним. Відсутність Ірини Миколаївни призводить до зниження організованості процесів, падіння морального духу та відчутного погіршення якості взаємодії в середовищі праці й навчання.</p>
+        <p>З огляду на викладене <strong>ПРОСИМО</strong>:</p>
+        <ol>
+          <li>Вжити належних заходів для повернення Ірини Миколаївни на її законне місце виконання обов’язків.</li>
+          <li>Забезпечити публічне інформування ініціаторів і підписантів щодо прийнятого рішення.</li>
+          <li>За можливості — ініціювати урочисту зустріч із належним вшануванням її ролі (квіти, подяки, доброзичливі звернення).</li>
+        </ol>
+        <p>Віримо, що позитивне вирішення цього питання сприятиме відновленню балансу, підвищенню довіри та міжособистісної взаємоповаги.</p>
+      </div>
+    </section>
+
+    <aside class="card sticky">
+      <div class="head">Підписання петиції</div>
+      <div class="body">
+        <div class="progress-wrap">
+          <span>Вже підписали</span>
+          <strong id="count">1 280</strong>
+        </div>
+        <div class="progress" aria-label="Прогрес збору підписів">
+          <i id="bar" style="width: 51%"></i>
+        </div>
+        <div class="muted" style="font-size:12px; margin-top:6px"><span id="pct">51</span>% від цілі (з 2 500 необхідних)</div>
+        <button class="btn" style="margin-top:14px" id="signBtn">Підписати петицію</button>
+        <div class="row" style="margin-top:10px">
+          <button class="btn outline" id="copyBtn2">Копіювати посилання</button>
+          <button class="btn outline" id="shareBtn2">Поділитися</button>
+        </div>
+        <div class="note">Підписуючи, ви підтверджуєте достовірність даних та надаєте згоду на їх обробку відповідно до законодавства України.</div>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="modal">
+    <div class="modal-head">Підписання петиції</div>
+    <form method="dialog" id="signForm">
+      <div class="modal-body">
+        <div class="field">
+          <label for="name">ПІБ</label>
+          <input id="name" type="text" placeholder="Прізвище Ім'я По батькові" />
+          <div class="error" id="eName" hidden>Вкажіть ПІБ</div>
+        </div>
+        <div class="field">
+          <label for="email">Електронна пошта</label>
+          <input id="email" type="email" placeholder="name@example.com" />
+          <div class="error" id="eEmail" hidden>Некоректна електронна адреса</div>
+        </div>
+        <div class="field">
+          <label for="comment">Коментар (необов’язково)</label>
+          <textarea id="comment" placeholder="Ваші аргументи чи побажання"></textarea>
+        </div>
+        <div class="check">
+          <input id="agree" type="checkbox" />
+          <label for="agree">Погоджуюся на обробку персональних даних з метою підтвердження підпису</label>
+        </div>
+        <div class="error" id="eAgree" hidden>Потрібна згода на обробку даних</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" value="cancel" type="button" id="cancel">Скасувати</button>
+        <button class="btn" id="submit">Підписати</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <div class="container">© 2025 Єдиний портал електронних петицій (демо). Ця сторінка імітує вигляд офіційного сайту у демонстраційних цілях.</div>
+  </footer>
+
+  <script>
+    // Демо-логіка підписів
+    const goal = 2500;
+    let signatures = 1280;
+
+    const fmt = new Intl.NumberFormat('uk-UA');
+    const countEl = document.getElementById('count');
+    const barEl = document.getElementById('bar');
+    const pctEl = document.getElementById('pct');
+
+    function render(){
+      countEl.textContent = fmt.format(signatures);
+      const pct = Math.min(100, Math.round(signatures / goal * 100));
+      barEl.style.width = pct + '%';
+      pctEl.textContent = pct;
+    }
+    render();
+
+    // Модальне вікно
+    const modal = document.getElementById('modal');
+    const openBtns = [document.getElementById('signBtn')];
+    openBtns.forEach(b=>b?.addEventListener('click', ()=> modal.showModal()));
+    document.getElementById('cancel').addEventListener('click', ()=> modal.close());
+
+    // Копіювання/шерінг
+    function copyLink(){
+      const url = location.href;
+      navigator.clipboard?.writeText(url);
+      toast('Посилання скопійовано');
+    }
+    function webShare(){
+      const data = { title: document.title, text: 'Петиція: Повернення Ірини Миколаївни', url: location.href };
+      if(navigator.share){ navigator.share(data).catch(()=>{}); }
+      else { copyLink(); }
+    }
+    document.getElementById('copyBtn').addEventListener('click', copyLink);
+    document.getElementById('copyBtn2').addEventListener('click', copyLink);
+    document.getElementById('shareBtn').addEventListener('click', webShare);
+    document.getElementById('shareBtn2').addEventListener('click', webShare);
+
+    // Валідація та сабміт
+    function validate(){
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const agree = document.getElementById('agree');
+      let ok = true;
+      const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+      const eName = document.getElementById('eName');
+      const eEmail = document.getElementById('eEmail');
+      const eAgree = document.getElementById('eAgree');
+
+      eName.hidden = !!name.value.trim();
+      if(!name.value.trim()) ok = false;
+
+      eEmail.hidden = emailRe.test(email.value);
+      if(!emailRe.test(email.value)) ok = false;
+
+      eAgree.hidden = agree.checked;
+      if(!agree.checked) ok = false;
+
+      return ok;
+    }
+
+    document.getElementById('submit').addEventListener('click', (ev)=>{
+      ev.preventDefault();
+      if(!validate()) return;
+      signatures += 1; render();
+      modal.close();
+      toast('Підпис додано. Дякуємо!');
+      document.getElementById('signForm').reset();
+    });
+
+    // Toast
+    const toastEl = document.getElementById('toast');
+    let tmo;
+    function toast(msg){
+      clearTimeout(tmo);
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      tmo = setTimeout(()=> toastEl.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
